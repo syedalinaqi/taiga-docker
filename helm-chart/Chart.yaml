@@ -1,0 +1,33 @@
+apiVersion: v1
+name: taiga
+appVersion: 6.0
+version: 0.0.1
+description: A flexible project management web application.
+engine: gotpl
+dependencies:
+- name: rabbitmq
+  version: 8.6.1
+  repository: https://charts.bitnami.com/bitnami
+  alias: async-rabbitmq
+  condition: rabbitmq.enabled
+- name: rabbitmq
+  version: 8.6.1
+  repository: https://charts.bitnami.com/bitnami
+  alias: events-rabbitmq
+  condition: rabbitmq.enabled
+- name: postgresql
+  version: 10.2.0
+  repository: https://charts.bitnami.com/bitnami
+  condition: postgresql.enabled
+home: https://www.taiga.io/
+icon: https://raw.githubusercontent.com/taigaio/taiga-front/master/app/svg/logo-color.svg
+keywords:
+- taiga
+- project management
+- www
+- http
+- web
+- application
+- python
+sources:
+- https://github.com/taigaio/taiga-docker

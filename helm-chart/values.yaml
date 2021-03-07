@@ -30,7 +30,7 @@ enableTelemetry: true
 
 ## Public registration
 ##
-publicRegisterEnabled: false
+publicRegisterEnabled: true
 
 ## Github settings
 ## Get these in your profile https://github.com/settings/apps

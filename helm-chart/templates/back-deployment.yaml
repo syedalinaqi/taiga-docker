@@ -58,12 +58,20 @@ spec:
           {{- else }}
           - name: TAIGA_SITES_SCHEME
             value: "http"
+          - name: SESSION_COOKIE_SECURE
+            value: "False"
+          - name: CSRF_COOKIE_SECURE
+            value: "False"
           {{- end }}
           {{ else }}
           - name: TAIGA_SITES_DOMAIN
             value: "localhost:9000"
           - name: TAIGA_SITES_SCHEME
             value: "http"
+          - name: SESSION_COOKIE_SECURE
+            value: "False"
+          - name: CSRF_COOKIE_SECURE
+            value: "False"
           {{ end }}
           {{ if .Values.smtp.enabled }}
           - name: EMAIL_BACKEND:
@@ -93,7 +101,7 @@ spec:
           {{ end }}
           - name: RABBITMQ_USER
             value: {{ .Values.async.rabbitmq.auth.username }}
-          - name: RABBITMQ_PASSWORD
+          - name: RABBITMQ_PASS
             value: {{ .Values.async.rabbitmq.auth.password }}
           - name: ENABLE_TELEMETRY
             {{- if .Values.enableTelemetry }}

@@ -23,5 +23,5 @@ spec:
       {{- if (and (eq .Values.gateway.service.type "NodePort") (not (empty .Values.gateway.service.nodePorts.http)))}}
       nodePort: {{ .Values.gateway.service.nodePorts.http }}
       {{- end }}
-  selector: {{- include "taiga.gateway.matchLabels" . | nindent 4 }}
+  selector: {{- include "taiga.back.matchLabels" . | nindent 4 }}
 {{ end }}

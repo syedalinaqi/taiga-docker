@@ -22,4 +22,12 @@ spec:
       {{- if (and (eq .Values.back.service.type "NodePort") (not (empty .Values.back.service.nodePorts.http)))}}
       nodePort: {{ .Values.back.service.nodePorts.http }}
       {{- end }}
+    {{ if .Values.gateway.enabled }}
+    - name: taiga-gateway
+      port: {{ .Values.gateway.service.port }}
+      targetPort: taiga-gateway
+      {{- if (and (eq .Values.gateway.service.type "NodePort") (not (empty .Values.gateway.service.nodePorts.http)))}}
+      nodePort: {{ .Values.gateway.service.nodePorts.http }}
+      {{- end }}
+    {{ end }}
   selector: {{- include "taiga.back.matchLabels" . | nindent 4 }}

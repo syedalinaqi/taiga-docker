@@ -545,7 +545,7 @@ protected:
   service:
     type: ClusterIP
     # HTTP Port
-    port: 80
+    port: 8003
     ## loadBalancerIP:
     ## Control hosts connecting to "LoadBalancer" only
     loadBalancerSourceRanges:

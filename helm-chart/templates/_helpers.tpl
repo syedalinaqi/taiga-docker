@@ -62,6 +62,12 @@ helm.sh/chart: {{ template "taiga.chart" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end -}}
+{{- define "taiga.gateway.labels" -}}
+app.kubernetes.io/name: {{ template "taiga.name" . }}-gateway
+helm.sh/chart: {{ template "taiga.chart" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end -}}
 
 {{/*
 Return  the proper Storage Class
@@ -141,6 +147,13 @@ front
 app.kubernetes.io/name: {{ template "taiga.name" . }}-front
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}
+{{/*
+gateway
+*/}}
+{{- define "taiga.gateway.matchLabels" -}}
+app.kubernetes.io/name: {{ template "taiga.name" . }}-gateway
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end -}}
 
 
 {{/*
@@ -209,6 +222,29 @@ Return the proper Taiga image name
 {{- $registryName := .Values.protected.image.registry -}}
 {{- $repositoryName := .Values.protected.image.repository -}}
 {{- $tag := .Values.protected.image.tag | toString -}}
+{{/*
+Helm 2.11 supports the assignment of a value to a variable defined in a different scope,
+but Helm 2.9 and 2.10 doesn't support it, so we need to implement this if-else logic.
+Also, we can't use a single if because lazy evaluation is not an option
+*/}}
+{{- if .Values.global }}
+    {{- if .Values.global.imageRegistry }}
+        {{- printf "%s/%s:%s" .Values.global.imageRegistry $repositoryName $tag -}}
+    {{- else -}}
+        {{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
+    {{- end -}}
+{{- else -}}
+    {{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the proper Taiga image name
+*/}}
+{{- define "taiga.gateway.image" -}}
+{{- $registryName := .Values.gateway.image.registry -}}
+{{- $repositoryName := .Values.gateway.image.repository -}}
+{{- $tag := .Values.gateway.image.tag | toString -}}
 {{/*
 Helm 2.11 supports the assignment of a value to a variable defined in a different scope,
 but Helm 2.9 and 2.10 doesn't support it, so we need to implement this if-else logic.
@@ -359,6 +395,41 @@ imagePullSecrets:
 {{- else if .Values.front.image.pullSecrets }}
 imagePullSecrets:
 {{- range .Values.front.image.pullSecrets }}
+  - name: {{ . }}
+{{- end }}
+{{- end -}}
+{{- end -}}
+
+
+{{/*
+Return the proper Docker Image Registry Secret Names
+*/}}
+{{- define "taiga.gateway.imagePullSecrets" -}}
+{{/*
+Helm 2.11 supports the assignment of a value to a variable defined in a different scope,
+but Helm 2.9 and 2.10 does not support it, so we need to implement this if-else logic.
+Also, we can not use a single if because lazy evaluation is not an option
+*/}}
+{{- if .Values.global }}
+
+  {{- if .Values.global.imagePullSecrets }}
+imagePullSecrets:
+  {{- range .Values.global.imagePullSecrets }}
+  - name: {{ . }}
+{{- end }}
+
+{{- else if .Values.gateway.image.pullSecrets }}
+
+imagePullSecrets:
+{{- range .Values.gateway.image.pullSecrets }}
+  - name: {{ . }}
+{{- end }}
+
+{{- end -}}
+
+{{- else if .Values.gateway.image.pullSecrets }}
+imagePullSecrets:
+{{- range .Values.gateway.image.pullSecrets }}
   - name: {{ . }}
 {{- end }}
 {{- end -}}

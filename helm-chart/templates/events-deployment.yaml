@@ -2,14 +2,14 @@ apiVersion: {{ template "taiga.deployment.apiVersion" . }}
 kind: Deployment
 metadata:
   name: {{ template "taiga.fullname" . }}-events
-  labels: {{- include "taiga.labels" . | nindent 4 }}
+  labels: {{- include "taiga.events.labels" . | nindent 4 }}
 spec:
   selector:
-    matchLabels: {{- include "taiga.matchLabels" . | nindent 6 }}
+    matchLabels: {{- include "taiga.events.matchLabels" . | nindent 6 }}
   replicas: {{ .Values.events.replicas }}
   template:
     metadata:
-      labels: {{- include "taiga.labels" . | nindent 8 }}
+      labels: {{- include "taiga.events.labels" . | nindent 8 }}
         app.kubernetes.io/component: {{ template "taiga.name" . }}-events
       {{- if .Values.events.podAnnotations }}
       annotations:

@@ -64,7 +64,7 @@ spec:
           {{ if .Values.gitlabAuth.enabled }}
           - name: ENABLE_GITLAB_AUTH
             value: "true"
-          - name: GITLAB_API_CLIENT_ID
+          - name: GITLAB_CLIENT_ID
             value: "{{ .Values.gitlabAuth.apiClientId }}"
           - name: GITLAB_URL
             value: "{{ .Values.gitlabAuth.gitlabUrl }}"

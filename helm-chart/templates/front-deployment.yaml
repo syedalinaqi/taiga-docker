@@ -129,23 +129,3 @@ spec:
           successThreshold: {{ .Values.front.readinessProbe.successThreshold }}
           failureThreshold: {{ .Values.front.readinessProbe.failureThreshold }}
         {{- end }}
-        volumeMounts:
-          - name: taiga-static
-            mountPath: /taiga-front/static
-          - name: taiga-media
-            mountPath: /taiga-front/media
-      volumes:
-        - name: taiga-static
-          {{- if .Values.persistence.enabled }}
-          persistentVolumeClaim:
-            claimName: {{ .Values.persistence.existingClaim | default (include "taiga.fullname" .) }}-static
-          {{- else }}
-          emptyDir: {}
-          {{- end }}
-        - name: taiga-media
-          {{- if .Values.persistence.enabled }}
-          persistentVolumeClaim:
-            claimName: {{ .Values.persistence.existingClaim | default (include "taiga.fullname" .) }}-media
-          {{- else }}
-          emptyDir: {}
-          {{- end }}

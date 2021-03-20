@@ -74,7 +74,7 @@ spec:
             value: "False"
           {{ end }}
           {{ if .Values.smtp.enabled }}
-          - name: EMAIL_BACKEND:
+          - name: EMAIL_BACKEND
             value: "django.core.mail.backends.smtp.EmailBackend"
           - name: DEFAULT_FROM_EMAIL
             value: "{{ .Values.smtp.from }}"
@@ -252,7 +252,7 @@ spec:
             value: "http"
           {{ end }}
           {{ if .Values.smtp.enabled }}
-          - name: EMAIL_BACKEND:
+          - name: EMAIL_BACKEND
             value: "django.core.mail.asyncends.smtp.EmailBackend"
           - name: DEFAULT_FROM_EMAIL
             value: "{{ .Values.smtp.from }}"

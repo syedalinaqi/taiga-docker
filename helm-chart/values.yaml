@@ -675,7 +675,7 @@ front:
     externalTrafficPolicy: Cluster
 
 gateway:
-  enabled: false
+  enabled: true
   ## Taiga gateway image version
   ## ref: https://hub.docker.com/_/nginx
   ##
@@ -882,7 +882,7 @@ persistence:
   ##
   # storageClass: "-"
   accessMode: ReadWriteOnce
-  size: 8Gi
+  size: 5Gi
 
 ## PostgreSQL chart configuration
 ##
@@ -920,7 +920,7 @@ postgresql:
     ##
     # storageClass: "-"
     accessMode: ReadWriteOnce
-    size: 8Gi
+    size: 1Gi
 
 ## async Rabbitmq chart configuration
 ##

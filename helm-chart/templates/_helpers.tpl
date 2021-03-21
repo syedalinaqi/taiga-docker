@@ -74,6 +74,12 @@ helm.sh/chart: {{ template "taiga.chart" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end -}}
+{{- define "taiga.protected.labels" -}}
+app.kubernetes.io/name: {{ template "taiga.name" . }}-protected
+helm.sh/chart: {{ template "taiga.chart" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end -}}
 
 {{/*
 Return  the proper Storage Class
@@ -165,6 +171,13 @@ events
 */}}
 {{- define "taiga.events.matchLabels" -}}
 app.kubernetes.io/name: {{ template "taiga.name" . }}-events
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end -}}
+{{/*
+events
+*/}}
+{{- define "taiga.protected.matchLabels" -}}
+app.kubernetes.io/name: {{ template "taiga.name" . }}-protected
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}
 

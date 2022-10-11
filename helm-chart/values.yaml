@@ -799,6 +799,11 @@ ingress:
   ##
   enabled: true
 
+  ## Set the ingressClassName
+  ## default to 'nginx' but maybe is better to set to 'public'
+  ##
+  ingressClassName: nginx
+
   ## Set this to true in order to add the corresponding annotations for cert-manager
   ##
   certManager: false

@@ -1,22 +1,22 @@
 apiVersion: v1
 name: taiga
 appVersion: 6.0
-version: 0.0.1
+version: 0.0.2
 description: A flexible project management web application.
 engine: gotpl
 dependencies:
 - name: rabbitmq
-  version: 8.6.1
+  version: 8.32.2
   repository: https://charts.bitnami.com/bitnami
   alias: async-rabbitmq
   condition: rabbitmq.enabled
 - name: rabbitmq
-  version: 8.6.1
+  version: 8.32.2
   repository: https://charts.bitnami.com/bitnami
   alias: events-rabbitmq
   condition: rabbitmq.enabled
 - name: postgresql
-  version: 10.2.0
+  version: 10.16.2
   repository: https://charts.bitnami.com/bitnami
   condition: postgresql.enabled
 home: https://www.taiga.io/

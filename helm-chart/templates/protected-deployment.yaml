@@ -18,13 +18,13 @@ spec:
     spec:
       {{- include "taiga.protected.imagePullSecrets" . | indent 6 }}
       {{- if .Values.protected.affinity }}
-      affinity: {{- include "redmine.tplValue" (dict "value" .Values.protected.affinity "context" $) | nindent 8 }}
+      affinity: {{- include "taiga.tplValue" (dict "value" .Values.protected.affinity "context" $) | nindent 8 }}
       {{- end }}
-      {{- if .Values.protected.nodeSelector }}
-      nodeSelector: {{- include "taiga.tplValue" (dict "value" .Values.protected.nodeSelector "context" $) | nindent 8 }}
+      {{- if .Values.nodeSelector }}
+      nodeSelector: {{ toYaml .Values.nodeSelector | nindent 8 }}
       {{- end }}
       {{- if .Values.protected.tolerations }}
-      tolerations: {{- include "redmine.tplValue" (dict "value" .Values.protected.tolerations "context" $) | nindent 8 }}
+      tolerations: {{- include "taiga.tplValue" (dict "value" .Values.protected.tolerations "context" $) | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ template "taiga.serviceAccountName" . }}
       {{- with .Values.protected.securityContext }}

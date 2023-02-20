@@ -84,7 +84,7 @@ createInitialUser: true
 ## Create initial templates
 ## ref: https://taigaio.github.io/taiga-doc/dist/setup-production.html
 ##
-createInitialTemplates: true
+createInitialTemplates: false
 
 back:
   ## Taiga image version
@@ -137,7 +137,7 @@ back:
   ##
   tolerations: []
 
-  ## Redmine containers' resource requests and limits
+  ## taiga containers' resource requests and limits
   ## ref: http://kubernetes.io/docs/user-guide/compute-resources/
   ##
   resources:
@@ -259,7 +259,7 @@ async:
   ##
   tolerations: []
 
-  ## Redmine containers' resource requests and limits
+  ## taiga containers' resource requests and limits
   ## ref: http://kubernetes.io/docs/user-guide/compute-resources/
   ##
   resources:
@@ -382,7 +382,7 @@ events:
   tolerations: []
 
 
-  ## Redmine containers' resource requests and limits
+  ## taiga containers' resource requests and limits
   ## ref: http://kubernetes.io/docs/user-guide/compute-resources/
   ##
   resources:
@@ -498,7 +498,7 @@ protected:
   tolerations: []
 
 
-  ## Redmine containers' resource requests and limits
+  ## taiga containers' resource requests and limits
   ## ref: http://kubernetes.io/docs/user-guide/compute-resources/
   ##
   resources:
@@ -611,7 +611,7 @@ front:
   ##
   tolerations: []
 
-  ## Redmine containers' resource requests and limits
+  ## taiga containers' resource requests and limits
   ## ref: http://kubernetes.io/docs/user-guide/compute-resources/
   ##
   resources:
@@ -726,7 +726,7 @@ gateway:
   ##
   tolerations: []
 
-  ## Redmine containers' resource requests and limits
+  ## taiga containers' resource requests and limits
   ## ref: http://kubernetes.io/docs/user-guide/compute-resources/
   ##
   resources:
@@ -750,14 +750,14 @@ gateway:
     periodSeconds: 10
     timeoutSeconds: 5
     successThreshold: 1
-    failureThreshold: 3
+    failureThreshold: 10
   readinessProbe:
     enabled: false
     initialDelaySeconds: 5
     periodSeconds: 10
     timeoutSeconds: 1
     successThreshold: 1
-    failureThreshold: 3
+    failureThreshold: 10
 
 
   ## Environment variables, to pass to the entry point
@@ -831,15 +831,15 @@ ingress:
   ## The list of additional hostnames to be covered with this ingress record.
   ## Most likely the hostname above will be enough, but in the event more hosts are needed, this is an array
   ## extraHosts:
-  ## - name: redmine.local
+  ## - name: taiga.local
   ##   path: /
 
   ## The tls configuration for additional hostnames to be covered with this ingress record.
   ## see: https://kubernetes.io/docs/concepts/services-networking/ingress/#tls
   ## extraTls:
   ## - hosts:
-  ##     - redmine.local
-  ##   secretName: redmine.local-tls
+  ##     - taiga.local
+  ##   secretName: taiga.local-tls
 
   ## If you're providing your own certificates, please use this to add the certificates as secrets
   ## key and certificate should start with -----BEGIN CERTIFICATE----- or
@@ -852,7 +852,7 @@ ingress:
   ## Please see README.md for more information
   ##
   secrets: []
-  ## - name: redmine.local-tls
+  ## - name: taiga.local-tls
   ##   key:
   ##   certificate:
     
@@ -865,7 +865,7 @@ serviceAccount:
   ##
   create: false
   ## The name of the ServiceAccount to use.
-  ## If not set and create is true, a name is generated using the redmine.fullname template
+  ## If not set and create is true, a name is generated using the taiga.fullname template
   # name:
 
 ## Enable persistence using Persistent Volume Claims
@@ -878,7 +878,7 @@ persistence:
   ## If defined, PVC must be created manually before volume will be bound
   # existingClaim:
 
-  ## redmine data Persistent Volume Storage Class
+  ## taiga data Persistent Volume Storage Class
   ## If defined, storageClassName: <storageClass>
   ## If set to "-", storageClassName: "", which disables dynamic provisioning
   ## If undefined (the default) or set to null, no storageClassName spec is
@@ -894,17 +894,32 @@ persistence:
 ## https://github.com/helm/charts/blob/master/stable/postgresql/values.yaml
 ##
 postgresql:
+  image:
+    tag: 13.10.0-debian-11-r2
+
   ## Whether to deploy a PostgreSQL server to satisfy the applications database requirements. To use an external database set this to false and configure the externalDatabase parameters
   enabled: true
 
-  ## Create a database and a database user
-  ## ref: https://github.com/bitnami/bitnami-docker-postgresql/#creating-a-database-on-first-run
+  ## ref: https://github.com/bitnami/containers/tree/main/bitnami/postgresql#setting-the-root-password-on-first-run
+  ## ref: https://github.com/bitnami/containers/tree/main/bitnami/postgresql#creating-a-database-on-first-run
+  ## ref: https://github.com/bitnami/containers/tree/main/bitnami/postgresql#creating-a-database-user-on-first-run
   ##
-  postgresqlDatabase: taiga
-  postgresqlUsername: taiga
-  ##
-  ## If the password is not specified, postgresql will generate a random password
-  postgresqlPassword: taiga
+  auth:
+    ## @param auth.enablePostgresUser Assign a password to the "postgres" admin user. Otherwise, remote access will be blocked for this user
+    ##
+    enablePostgresUser: true
+    ## @param auth.postgresPassword Password for the "postgres" admin user. Ignored if `auth.existingSecret` with key `postgres-password` is provided
+    ##
+    postgresPassword: "taiga"
+    ## @param auth.username Name for a custom user to create
+    ##
+    username: "taiga"
+    ## @param auth.password Password for the custom user to create. Ignored if `auth.existingSecret` with key `password` is provided
+    ##
+    password: "taiga"
+    ## @param auth.database Name for a custom database to create
+    ##
+    database: "taiga"
 
   ## Enable persistence using Persistent Volume Claims
   ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/

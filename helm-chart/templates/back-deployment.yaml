@@ -31,380 +31,391 @@ spec:
       securityContext: {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
-      # https://www.caktusgroup.com/blog/2017/03/14/production-ready-dockerfile-your-python-django-app/
-      - name: {{ template "taiga.fullname" . }}-back
-        image: {{ template "taiga.back.image" . }}
-        imagePullPolicy: {{ .Values.back.image.pullPolicy | quote }}
+        # https://www.caktusgroup.com/blog/2017/03/14/production-ready-dockerfile-your-python-django-app/
+        - name: {{ template "taiga.fullname" . }}-back
+          image: {{ template "taiga.back.image" . }}
+          imagePullPolicy: {{ .Values.back.image.pullPolicy | quote }}
         {{- if .Values.back.resources }}
-        resources: {{ toYaml .Values.back.resources | nindent 12 }}
+          resources: {{ toYaml .Values.back.resources | nindent 12 }}
         {{- end }}
-        env:
-          - name: POSTGRES_DB
-            value: "{{ .Values.postgresql.auth.database }}"
-          - name: POSTGRES_USER
-            value: "{{ .Values.postgresql.auth.username }}"
-          - name: POSTGRES_PASSWORD
-            value: "{{ .Values.postgresql.auth.password }}"
-          - name: POSTGRES_HOST
-            value: "{{ template "taiga.fullname" . }}-postgresql"
-          - name: TAIGA_SECRET_KEY
-            value: "{{ .Values.secretKey }}"
+          env:
+            - name: POSTGRES_DB
+              value: "{{ .Values.postgresql.auth.database }}"
+            - name: POSTGRES_USER
+              value: "{{ .Values.postgresql.auth.username }}"
+            - name: POSTGRES_PASSWORD
+              value: "{{ .Values.postgresql.auth.password }}"
+            - name: POSTGRES_HOST
+              value: "{{ template "taiga.fullname" . }}-postgresql"
+            - name: TAIGA_SECRET_KEY
+              value: "{{ .Values.secretKey }}"
           {{ if .Values.ingress.enabled }}
-          - name: TAIGA_SITES_DOMAIN
-            value: "{{ .Values.ingress.hostname }}"
+            - name: TAIGA_SITES_DOMAIN
+              value: "{{ .Values.ingress.hostname }}"
           {{- if .Values.ingress.tls }}
-          - name: TAIGA_SITES_SCHEME
-            value: "https"
+            - name: TAIGA_SITES_SCHEME
+              value: "https"
           {{- else }}
-          - name: TAIGA_SITES_SCHEME
-            value: "http"
-          - name: SESSION_COOKIE_SECURE
-            value: "False"
-          - name: CSRF_COOKIE_SECURE
-            value: "False"
+            - name: TAIGA_SITES_SCHEME
+              value: "http"
+            - name: SESSION_COOKIE_SECURE
+              value: "False"
+            - name: CSRF_COOKIE_SECURE
+              value: "False"
           {{- end }}
           {{ else }}
-          - name: TAIGA_SITES_DOMAIN
-            value: "localhost:9000"
-          - name: TAIGA_SITES_SCHEME
-            value: "http"
-          - name: SESSION_COOKIE_SECURE
-            value: "False"
-          - name: CSRF_COOKIE_SECURE
-            value: "False"
+            - name: TAIGA_SITES_DOMAIN
+              value: "localhost:9000"
+            - name: TAIGA_SITES_SCHEME
+              value: "http"
+            - name: SESSION_COOKIE_SECURE
+              value: "False"
+            - name: CSRF_COOKIE_SECURE
+              value: "False"
           {{ end }}
           {{ if .Values.smtp.enabled }}
-          - name: EMAIL_BACKEND
-            value: "django.core.mail.backends.smtp.EmailBackend"
-          - name: DEFAULT_FROM_EMAIL
-            value: "{{ .Values.smtp.from }}"
-          - name: EMAIL_USE_TLS
+            - name: EMAIL_BACKEND
+              value: "django.core.mail.backends.smtp.EmailBackend"
+            - name: DEFAULT_FROM_EMAIL
+              value: "{{ .Values.smtp.from }}"
+            - name: EMAIL_USE_TLS
             {{- if .Values.smtp.tls }}
-            value: "True"
+              value: "True"
             {{- else }}
-            value: "False"
+              value: "False"
             {{- end }}
-          - name: EMAIL_USE_SSL
+            - name: EMAIL_USE_SSL
             {{- if .Values.smtp.ssl }}
-            value: "True"
+              value: "True"
             {{- else }}
-            value: "False"
+              value: "False"
             {{- end }}
-          - name: EMAIL_HOST
-            value: "{{ .Values.smtp.host }}"
-          - name: EMAIL_PORT
-            value: "{{ .Values.smtp.port }}"
-          - name: EMAIL_HOST_USER
-            value: "{{ .Values.smtp.user }}"
-          - name: EMAIL_HOST_PASSWORD
-            value: "{{ .Values.smtp.password }}"
+            - name: EMAIL_HOST
+              value: "{{ .Values.smtp.host }}"
+            - name: EMAIL_PORT
+              value: "{{ .Values.smtp.port }}"
+            - name: EMAIL_HOST_USER
+              value: "{{ .Values.smtp.user }}"
+            - name: EMAIL_HOST_PASSWORD
+              value: "{{ .Values.smtp.password }}"
           {{ end }}
-          - name: RABBITMQ_USER
-            value: {{ .Values.async.rabbitmq.auth.username }}
-          - name: RABBITMQ_PASS
-            value: {{ .Values.async.rabbitmq.auth.password }}
-          - name: ENABLE_TELEMETRY
+            - name: RABBITMQ_USER
+              value: {{ .Values.async.rabbitmq.auth.username }}
+            - name: RABBITMQ_PASS
+              value: {{ .Values.async.rabbitmq.auth.password }}
+            - name: ENABLE_TELEMETRY
             {{- if .Values.enableTelemetry }}
-            value: "True"
+              value: "True"
             {{- else }}
-            value: "False"
+              value: "False"
             {{- end }}
-          - name: PUBLIC_REGISTER_ENABLED
+            - name: PUBLIC_REGISTER_ENABLED
             {{- if .Values.publicRegisterEnabled }}
-            value: "True"
+              value: "True"
             {{- else }}
-            value: "False"
+              value: "False"
             {{- end }}
           {{ if .Values.githubAuth.enabled }}
-          - name: ENABLE_GITHUB_AUTH
-            value: "True"
-          - name: GITHUB_API_CLIENT_ID
-            value: "{{ .Values.githubAuth.apiClientId }}"
-          - name: GITHUB_API_CLIENT_SECRET
-            value: "{{ .Values.githubAuth.apiClientSecret }}"
+            - name: ENABLE_GITHUB_AUTH
+              value: "True"
+            - name: GITHUB_API_CLIENT_ID
+              value: "{{ .Values.githubAuth.apiClientId }}"
+            - name: GITHUB_API_CLIENT_SECRET
+              value: "{{ .Values.githubAuth.apiClientSecret }}"
           {{ else }}
-          - name: ENABLE_GITHUB_AUTH
-            value: "False"
+            - name: ENABLE_GITHUB_AUTH
+              value: "False"
           {{ end }}
           {{ if .Values.gitlabAuth.enabled }}
-          - name: ENABLE_GITLAB_AUTH
-            value: "True"
-          - name: GITLAB_API_CLIENT_ID
-            value: "{{ .Values.gitlabAuth.apiClientId }}"
-          - name: GITLAB_API_CLIENT_SECRET
-            value: "{{ .Values.gitlabAuth.apiClientSecret }}"
-          - name: GITLAB_URL
-            value: "{{ .Values.gitlabAuth.gitlabUrl }}"
+            - name: ENABLE_GITLAB_AUTH
+              value: "True"
+            - name: GITLAB_API_CLIENT_ID
+              value: "{{ .Values.gitlabAuth.apiClientId }}"
+            - name: GITLAB_API_CLIENT_SECRET
+              value: "{{ .Values.gitlabAuth.apiClientSecret }}"
+            - name: GITLAB_URL
+              value: "{{ .Values.gitlabAuth.gitlabUrl }}"
           {{ else }}
-          - name: ENABLE_GITLAB_AUTH
-            value: "False"
+            - name: ENABLE_GITLAB_AUTH
+              value: "False"
           {{ end }}
-          - name: ENABLE_SLACK
+            - name: ENABLE_SLACK
             {{ if .Values.enableSlack }}
-            value: "True"
+              value: "True"
             {{ else }}
-            value: "False"
+              value: "False"
             {{ end }}
           {{ if .Values.githubImporter.enabled }}
-          - name: ENABLE_GITHUB_IMPORTER
-            value: "True"
-          - name: GITHUB_API_CLIENT_ID
-            value: "{{ .Values.githubImporter.apiClientId }}"
-          - name: GITHUB_API_CLIENT_SECRET
-            value: "{{ .Values.githubImporter.apiClientSecret }}"
+            - name: ENABLE_GITHUB_IMPORTER
+              value: "True"
+            - name: GITHUB_API_CLIENT_ID
+              value: "{{ .Values.githubImporter.apiClientId }}"
+            - name: GITHUB_API_CLIENT_SECRET
+              value: "{{ .Values.githubImporter.apiClientSecret }}"
           {{ else }}
-          - name: ENABLE_GITHUB_IMPORTER
-            value: "False"
+            - name: ENABLE_GITHUB_IMPORTER
+              value: "False"
           {{ end }}
           {{ if .Values.jiraImporter.enabled }}
-          - name: ENABLE_JIRA_IMPORTER
-            value: "True"
-          - name: JIRA_IMPORTER_CONSUMER_KEY
-            value: "{{ .Values.jiraImporter.consumerKey }}"
-          - name: JIRA_IMPORTER_CERT
-            value: "{{ .Values.jiraImporter.cert }}"
-          - name: JIRA_IMPORTER_PUB_CERT
-            value: "{{ .Values.jiraImporter.pubCert }}"
+            - name: ENABLE_JIRA_IMPORTER
+              value: "True"
+            - name: JIRA_IMPORTER_CONSUMER_KEY
+              value: "{{ .Values.jiraImporter.consumerKey }}"
+            - name: JIRA_IMPORTER_CERT
+              value: "{{ .Values.jiraImporter.cert }}"
+            - name: JIRA_IMPORTER_PUB_CERT
+              value: "{{ .Values.jiraImporter.pubCert }}"
           {{ else }}
-          - name: ENABLE_JIRA_IMPORTER
-            value: "False"
+            - name: ENABLE_JIRA_IMPORTER
+              value: "False"
           {{ end }}
           {{ if .Values.trelloImporter }}
-          - name: ENABLE_TRELLO_IMPORTER
-            value: "True"
-          - name: TRELLO_IMPORTER_API_KEY
-            value: "{{ .Values.trelloImporter.apiKey }}"
-          - name: TRELLO_IMPORTER_SECRET_KEY
-            value: "{{ .Values.trelloImporter.secretKey }}"
+            - name: ENABLE_TRELLO_IMPORTER
+              value: "True"
+            - name: TRELLO_IMPORTER_API_KEY
+              value: "{{ .Values.trelloImporter.apiKey }}"
+            - name: TRELLO_IMPORTER_SECRET_KEY
+              value: "{{ .Values.trelloImporter.secretKey }}"
           {{ else }}
-          - name: ENABLE_JIRA_IMPORTER
-            value: "False"
+            - name: ENABLE_JIRA_IMPORTER
+              value: "False"
           {{ end }}
           {{- if .Values.back.extraVars }}
           {{- toYaml .Values.back.extraVars | nindent 12 }}
           {{- end }}
-        ports:
-          - name: taiga-back
-            containerPort: 8000
-        # Original check: wget -q -t 1 --spider http://localhost:8080/api/v1/
-        # but it does not work so change localhost to 127.0.0.1
+          ports:
+            - name: taiga-back
+              containerPort: 8000
+          # Original check: wget -q -t 1 --spider http://localhost:8080/api/v1/
+          # but it does not work so change localhost to 127.0.0.1
         {{- if .Values.back.livenessProbe.enabled }}
-        livenessProbe:
-          httpGet:
-            path: /admin/login/
-            port: 8000
-          initialDelaySeconds: {{ .Values.back.livenessProbe.initialDelaySeconds }}
-          periodSeconds: {{ .Values.back.livenessProbe.periodSeconds }}
-          timeoutSeconds: {{ .Values.back.livenessProbe.timeoutSeconds }}
-          successThreshold: {{ .Values.back.livenessProbe.successThreshold }}
-          failureThreshold: {{ .Values.back.livenessProbe.failureThreshold }}
+          livenessProbe:
+            httpGet:
+              path: /admin/login/
+              port: 8000
+            initialDelaySeconds: {{ .Values.back.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.back.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.back.livenessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.back.livenessProbe.successThreshold }}
+            failureThreshold: {{ .Values.back.livenessProbe.failureThreshold }}
         {{- end }}
         {{- if .Values.back.readinessProbe.enabled }}
-        readinessProbe:
-          httpGet:
-            path: /admin/login/
-            port: 8000
-          initialDelaySeconds: {{ .Values.back.readinessProbe.initialDelaySeconds }}
-          periodSeconds: {{ .Values.back.readinessProbe.periodSeconds }}
-          timeoutSeconds: {{ .Values.back.readinessProbe.timeoutSeconds }}
-          successThreshold: {{ .Values.back.readinessProbe.successThreshold }}
-          failureThreshold: {{ .Values.back.readinessProbe.failureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: /admin/login/
+              port: 8000
+            initialDelaySeconds: {{ .Values.back.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.back.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.back.readinessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.back.readinessProbe.successThreshold }}
+            failureThreshold: {{ .Values.back.readinessProbe.failureThreshold }}
         {{- end }}
-        volumeMounts:
-          - name: taiga-static
-            mountPath: /taiga-back/static
-          - name: taiga-media
-            mountPath: /taiga-back/media
-      # https://www.caktusgroup.com/blog/2017/03/14/production-ready-dockerfile-your-python-django-app/
-      - name: {{ template "taiga.fullname" . }}-async
-        image: {{ template "taiga.async.image" . }}
-        imagePullPolicy: {{ .Values.async.image.pullPolicy | quote }}
+          volumeMounts:
+            - name: taiga-static
+              mountPath: /taiga-back/static
+            - name: taiga-media
+              mountPath: /taiga-back/media
+        # https://www.caktusgroup.com/blog/2017/03/14/production-ready-dockerfile-your-python-django-app/
+        - name: {{ template "taiga.fullname" . }}-async
+          image: {{ template "taiga.async.image" . }}
+          imagePullPolicy: {{ .Values.async.image.pullPolicy | quote }}
         {{- if .Values.async.resources }}
-        resources: {{ toYaml .Values.async.resources | nindent 12 }}
+          resources: {{ toYaml .Values.async.resources | nindent 12 }}
         {{- end }}
-        command:
-        - /taiga-back/docker/async_entrypoint.sh
-        env:
-          - name: POSTGRES_DB
-            value: "{{ .Values.postgresql.postgresqlDatabase }}"
-          - name: POSTGRES_USER
-            value: "{{ .Values.postgresql.postgresqlUsername }}"
-          - name: POSTGRES_PASSWORD
-            value: "{{ .Values.postgresql.postgresqlPassword }}"
-          - name: POSTGRES_HOST
-            value: "{{ template "taiga.fullname" . }}-postgresql"
-          - name: TAIGA_SECRET_KEY
-            value: "{{ .Values.secretKey }}"
-          {{ if .Values.ingress.enabled }}
-          - name: TAIGA_SITES_DOMAIN
-            value: "{{ .Values.ingress.hostname }}"
-          {{- if .Values.ingress.tls }}
-          - name: TAIGA_SITES_SCHEME
-            value: "https"
+          command:
+            - /taiga-back/docker/async_entrypoint.sh
+          env:
+         {{- if .Values.postgresql.enabled }}
+            - name: POSTGRES_DB
+              value: "{{ .Values.postgresql.postgresqlDatabase }}"
+            - name: POSTGRES_USER
+              value: "{{ .Values.postgresql.postgresqlUsername }}"
+            - name: POSTGRES_PASSWORD
+              value: "{{ .Values.postgresql.postgresqlPassword }}"
+            - name: POSTGRES_HOST
+              value: "{{ template "taiga.fullname" . }}-postgresql"
           {{- else }}
-          - name: TAIGA_SITES_SCHEME
-            value: "http"
+            - name: POSTGRES_DB
+              value: "{{ .Values.externalPostgres.database }}"
+            - name: POSTGRES_USER
+              value: "{{ .Values.externalPostgres.username }}"
+            - name: POSTGRES_PASSWORD
+              value: "{{ .Values.externalPostgres.password }}"
+            - name: POSTGRES_HOST
+              value: "{{ .Values.externalPostgres.host }}"
+          {{- end }}
+            - name: TAIGA_SECRET_KEY
+              value: "{{ .Values.secretKey }}"
+          {{ if .Values.ingress.enabled }}
+            - name: TAIGA_SITES_DOMAIN
+              value: "{{ .Values.ingress.hostname }}"
+          {{- if .Values.ingress.tls }}
+            - name: TAIGA_SITES_SCHEME
+              value: "https"
+          {{- else }}
+            - name: TAIGA_SITES_SCHEME
+              value: "http"
           {{- end }}
           {{ else }}
-          - name: TAIGA_SITES_DOMAIN
-            value: "localhost:9000"
-          - name: TAIGA_SITES_SCHEME
-            value: "http"
+            - name: TAIGA_SITES_DOMAIN
+              value: "localhost:9000"
+            - name: TAIGA_SITES_SCHEME
+              value: "http"
           {{ end }}
           {{ if .Values.smtp.enabled }}
-          - name: EMAIL_BACKEND
-            value: "django.core.mail.asyncends.smtp.EmailBackend"
-          - name: DEFAULT_FROM_EMAIL
-            value: "{{ .Values.smtp.from }}"
-          - name: EMAIL_USE_TLS
+            - name: EMAIL_BACKEND
+              value: "django.core.mail.asyncends.smtp.EmailBackend"
+            - name: DEFAULT_FROM_EMAIL
+              value: "{{ .Values.smtp.from }}"
+            - name: EMAIL_USE_TLS
             {{- if .Values.smtp.tls }}
-            value: "True"
+              value: "True"
             {{- else }}
-            value: "False"
+              value: "False"
             {{- end }}
-          - name: EMAIL_USE_SSL
+            - name: EMAIL_USE_SSL
             {{- if .Values.smtp.ssl }}
-            value: "True"
+              value: "True"
             {{- else }}
-            value: "False"
+              value: "False"
             {{- end }}
-          - name: EMAIL_HOST
-            value: "{{ .Values.smtp.host }}"
-          - name: EMAIL_PORT
-            value: "{{ .Values.smtp.port }}"
-          - name: EMAIL_HOST_USER
-            value: "{{ .Values.smtp.user }}"
-          - name: EMAIL_HOST_PASSWORD
-            value: "{{ .Values.smtp.password }}"
+            - name: EMAIL_HOST
+              value: "{{ .Values.smtp.host }}"
+            - name: EMAIL_PORT
+              value: "{{ .Values.smtp.port }}"
+            - name: EMAIL_HOST_USER
+              value: "{{ .Values.smtp.user }}"
+            - name: EMAIL_HOST_PASSWORD
+              value: "{{ .Values.smtp.password }}"
           {{ end }}
-          - name: RABBITMQ_USER
-            value: {{ .Values.async.rabbitmq.auth.username }}
-          - name: RABBITMQ_PASS
-            value: {{ .Values.async.rabbitmq.auth.password }}
-          - name: ENABLE_TELEMETRY
+            - name: RABBITMQ_USER
+              value: {{ .Values.async.rabbitmq.auth.username }}
+            - name: RABBITMQ_PASS
+              value: {{ .Values.async.rabbitmq.auth.password }}
+            - name: ENABLE_TELEMETRY
             {{- if .Values.enableTelemetry }}
-            value: "True"
+              value: "True"
             {{- else }}
-            value: "False"
+              value: "False"
             {{- end }}
-          - name: PUBLIC_REGISTER_ENABLED
+            - name: PUBLIC_REGISTER_ENABLED
             {{- if .Values.publicRegisterEnabled }}
-            value: "True"
+              value: "True"
             {{- else }}
-            value: "False"
+              value: "False"
             {{- end }}
           {{ if .Values.githubAuth.enabled }}
-          - name: ENABLE_GITHUB_AUTH
-            value: "True"
-          - name: GITHUB_API_CLIENT_ID
-            value: "{{ .Values.githubAuth.apiClientId }}"
-          - name: GITHUB_API_CLIENT_SECRET
-            value: "{{ .Values.githubAuth.apiClientSecret }}"
+            - name: ENABLE_GITHUB_AUTH
+              value: "True"
+            - name: GITHUB_API_CLIENT_ID
+              value: "{{ .Values.githubAuth.apiClientId }}"
+            - name: GITHUB_API_CLIENT_SECRET
+              value: "{{ .Values.githubAuth.apiClientSecret }}"
           {{ else }}
-          - name: ENABLE_GITHUB_AUTH
-            value: "False"
+            - name: ENABLE_GITHUB_AUTH
+              value: "False"
           {{ end }}
           {{ if .Values.githubAuth.enabled }}
-          - name: ENABLE_GITLAB_AUTH
-            value: "True"
-          - name: GITLAB_API_CLIENT_ID
-            value: "{{ .Values.gitlabAuth.apiClientId }}"
-          - name: GITLAB_API_CLIENT_SECRET
-            value: "{{ .Values.gitlabAuth.apiClientSecret }}"
-          - name: GITLAB_URL
-            value: "{{ .Values.gitlabAuth.gitlabUrl }}"
+            - name: ENABLE_GITLAB_AUTH
+              value: "True"
+            - name: GITLAB_API_CLIENT_ID
+              value: "{{ .Values.gitlabAuth.apiClientId }}"
+            - name: GITLAB_API_CLIENT_SECRET
+              value: "{{ .Values.gitlabAuth.apiClientSecret }}"
+            - name: GITLAB_URL
+              value: "{{ .Values.gitlabAuth.gitlabUrl }}"
           {{ else }}
-          - name: ENABLE_GITLAB_AUTH
-            value: "False"
+            - name: ENABLE_GITLAB_AUTH
+              value: "False"
           {{ end }}
-          - name: ENABLE_SLACK
+            - name: ENABLE_SLACK
             {{ if .Values.enableSlack }}
-            value: "True"
+              value: "True"
             {{ else }}
-            value: "False"
+              value: "False"
             {{ end }}
           {{ if .Values.githubImporter.enabled }}
-          - name: ENABLE_GITHUB_IMPORTER
-            value: "True"
-          - name: GITHUB_API_CLIENT_ID
-            value: "{{ .Values.githubImporter.apiClientId }}"
-          - name: GITHUB_API_CLIENT_SECRET
-            value: "{{ .Values.githubImporter.apiClientSecret }}"
+            - name: ENABLE_GITHUB_IMPORTER
+              value: "True"
+            - name: GITHUB_API_CLIENT_ID
+              value: "{{ .Values.githubImporter.apiClientId }}"
+            - name: GITHUB_API_CLIENT_SECRET
+              value: "{{ .Values.githubImporter.apiClientSecret }}"
           {{ else }}
-          - name: ENABLE_GITHUB_IMPORTER
-            value: "False"
+            - name: ENABLE_GITHUB_IMPORTER
+              value: "False"
           {{ end }}
           {{ if .Values.jiraImporter.enabled }}
-          - name: ENABLE_JIRA_IMPORTER
-            value: "True"
-          - name: JIRA_IMPORTER_CONSUMER_KEY
-            value: "{{ .Values.jiraImporter.consumerKey }}"
-          - name: JIRA_IMPORTER_CERT
-            value: "{{ .Values.jiraImporter.cert }}"
-          - name: JIRA_IMPORTER_PUB_CERT
-            value: "{{ .Values.jiraImporter.pubCert }}"
+            - name: ENABLE_JIRA_IMPORTER
+              value: "True"
+            - name: JIRA_IMPORTER_CONSUMER_KEY
+              value: "{{ .Values.jiraImporter.consumerKey }}"
+            - name: JIRA_IMPORTER_CERT
+              value: "{{ .Values.jiraImporter.cert }}"
+            - name: JIRA_IMPORTER_PUB_CERT
+              value: "{{ .Values.jiraImporter.pubCert }}"
           {{ else }}
-          - name: ENABLE_JIRA_IMPORTER
-            value: "False"
+            - name: ENABLE_JIRA_IMPORTER
+              value: "False"
           {{ end }}
           {{ if .Values.trelloImporter }}
-          - name: ENABLE_TRELLO_IMPORTER
-            value: "True"
-          - name: TRELLO_IMPORTER_API_KEY
-            value: "{{ .Values.trelloImporter.apiKey }}"
-          - name: TRELLO_IMPORTER_SECRET_KEY
-            value: "{{ .Values.trelloImporter.secretKey }}"
+            - name: ENABLE_TRELLO_IMPORTER
+              value: "True"
+            - name: TRELLO_IMPORTER_API_KEY
+              value: "{{ .Values.trelloImporter.apiKey }}"
+            - name: TRELLO_IMPORTER_SECRET_KEY
+              value: "{{ .Values.trelloImporter.secretKey }}"
           {{ else }}
-          - name: ENABLE_JIRA_IMPORTER
-            value: "False"
+            - name: ENABLE_JIRA_IMPORTER
+              value: "False"
           {{ end }}
           {{- if .Values.async.extraVars }}
           {{- toYaml .Values.async.extraVars | nindent 12 }}
           {{- end }}
-        volumeMounts:
-          - name: taiga-static
-            mountPath: /taiga-back/static
-          - name: taiga-media
-            mountPath: /taiga-back/media
+          volumeMounts:
+            - name: taiga-static
+              mountPath: /taiga-back/static
+            - name: taiga-media
+              mountPath: /taiga-back/media
       {{ if .Values.gateway.enabled }}
-      - name: {{ template "taiga.fullname" . }}-gateway
-        image: {{ template "taiga.gateway.image" . }}
-        imagePullPolicy: {{ .Values.gateway.image.pullPolicy | quote }}
+        - name: {{ template "taiga.fullname" . }}-gateway
+          image: {{ template "taiga.gateway.image" . }}
+          imagePullPolicy: {{ .Values.gateway.image.pullPolicy | quote }}
         {{- if .Values.gateway.resources }}
-        resources: {{ toYaml .Values.gateway.resources | nindent 12 }}
+          resources: {{ toYaml .Values.gateway.resources | nindent 12 }}
         {{- end }}
-        ports:
-          - name: taiga-gateway
-            containerPort: 80
+          ports:
+            - name: taiga-gateway
+              containerPort: 80
         {{- if .Values.gateway.livenessProbe.enabled }}
-        livenessProbe:
-          httpGet:
-            path: /admin/login/
-            port: 80
-          initialDelaySeconds: {{ .Values.gateway.livenessProbe.initialDelaySeconds }}
-          periodSeconds: {{ .Values.gateway.livenessProbe.periodSeconds }}
-          timeoutSeconds: {{ .Values.gateway.livenessProbe.timeoutSeconds }}
-          successThreshold: {{ .Values.gateway.livenessProbe.successThreshold }}
-          failureThreshold: {{ .Values.gateway.livenessProbe.failureThreshold }}
+          livenessProbe:
+            httpGet:
+              path: /admin/login/
+              port: 80
+            initialDelaySeconds: {{ .Values.gateway.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.gateway.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.gateway.livenessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.gateway.livenessProbe.successThreshold }}
+            failureThreshold: {{ .Values.gateway.livenessProbe.failureThreshold }}
         {{- end }}
         {{- if .Values.gateway.readinessProbe.enabled }}
-        readinessProbe:
-          httpGet:
-            path: /admin/login/
-            port: 80
-          initialDelaySeconds: {{ .Values.gateway.readinessProbe.initialDelaySeconds }}
-          periodSeconds: {{ .Values.gateway.readinessProbe.periodSeconds }}
-          timeoutSeconds: {{ .Values.gateway.readinessProbe.timeoutSeconds }}
-          successThreshold: {{ .Values.gateway.readinessProbe.successThreshold }}
-          failureThreshold: {{ .Values.gateway.readinessProbe.failureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: /admin/login/
+              port: 80
+            initialDelaySeconds: {{ .Values.gateway.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.gateway.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.gateway.readinessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.gateway.readinessProbe.successThreshold }}
+            failureThreshold: {{ .Values.gateway.readinessProbe.failureThreshold }}
         {{- end }}
-        volumeMounts:
-          - name: taiga-static
-            mountPath: /taiga/static
-          - name: taiga-media
-            mountPath: /taiga/media
-          - name: taiga-conf
-            mountPath: /etc/nginx/conf.d/
+          volumeMounts:
+            - name: taiga-static
+              mountPath: /taiga/static
+            - name: taiga-media
+              mountPath: /taiga/media
+            - name: taiga-conf
+              mountPath: /etc/nginx/conf.d/
       {{ end }}
       volumes:
         - name: taiga-static
@@ -412,14 +423,14 @@ spec:
           persistentVolumeClaim:
             claimName: {{ .Values.persistence.existingClaim | default (include "taiga.fullname" .) }}-static
           {{- else }}
-          emptyDir: {}
+          emptyDir: { }
           {{- end }}
         - name: taiga-media
           {{- if .Values.persistence.enabled }}
           persistentVolumeClaim:
             claimName: {{ .Values.persistence.existingClaim | default (include "taiga.fullname" .) }}-media
           {{- else }}
-          emptyDir: {}
+          emptyDir: { }
           {{- end }}
         {{ if .Values.gateway.enabled }}
         - name: taiga-conf
